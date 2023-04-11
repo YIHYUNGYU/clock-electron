@@ -1,0 +1,50 @@
+{
+  "name": "clock",
+  "version": "1.0.0",
+  "description": "A simple Electron clock application",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "tsc && electron .",
+    "lint": "eslint .",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "electron": "^24.0.0",
+    "electron-builder": "^23.6.0",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.7",
+    "typescript": "^5.0.4"
+  },
+  "build": {
+    "appId": "com.example.electronclock",
+    "productName": "Electron Clock",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "index.html"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "entitlements": null,
+      "entitlementsInherit": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
