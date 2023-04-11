@@ -6,6 +6,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
     },
+    focusable: true,
   });
 
   win.loadFile("index.html");

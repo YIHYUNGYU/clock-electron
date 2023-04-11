@@ -1,46 +1,78 @@
-function updateTime() {
-  const clockElement = document.getElementById("clock") as HTMLElement;
-  const currentTime = new Date();
-  let hours = currentTime.getHours();
-  const minutes = currentTime.getMinutes().toString().padStart(2, "0");
-  const seconds = currentTime.getSeconds().toString().padStart(2, "0");
+class Clock {
+  private readonly clockElement: HTMLElement | null;
+  private alarmTimeInput: HTMLInputElement;
+  private setAlarmButton: HTMLButtonElement;
+  private alarmTime: string | null;
+  private isAlarmPlaying: boolean;
 
-  // 24시간제를 12시간제로 변환
-  const amPm = hours >= 12 ? "오후" : "오전";
-  hours = hours % 12;
-  hours = hours === 0 ? 12 : hours;
+  constructor() {
+    this.clockElement = document.getElementById("clock");
+    this.alarmTimeInput = document.getElementById(
+      "alarmTime"
+    ) as HTMLInputElement;
+    this.setAlarmButton = document.getElementById(
+      "setAlarm"
+    ) as HTMLButtonElement;
+    this.alarmTime = null;
+    this.isAlarmPlaying = false;
+    this.initialize();
+  }
 
-  if (clockElement) {
-    clockElement.innerHTML = `${hours}:${minutes}:${seconds} ${amPm}`;
-  } else {
-    console.error("Cannot find the clock element in the DOM");
+  private initialize() {
+    this.setAlarmButton.addEventListener("click", () => {
+      this.alarmTime = this.alarmTimeInput.value;
+      alert("알람이 설정되었습니다.");
+    });
+
+    setInterval(() => this.checkAlarm(), 1000);
+    setInterval(() => this.updateTime(), 1000);
+    this.updateTime();
+  }
+
+  private updateTime() {
+    const currentTime = new Date();
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, "0");
+    const seconds = currentTime.getSeconds().toString().padStart(2, "0");
+
+    const amPm = hours >= 12 ? "오후" : "오전";
+    hours = hours % 12;
+    hours = hours === 0 ? 12 : hours;
+
+    if (this.clockElement) {
+      this.clockElement.innerHTML = `${hours}:${minutes}:${seconds} ${amPm}`;
+    } else {
+      console.error("Cannot find the clock element in the DOM");
+    }
+  }
+
+  private playSoundAndShowAlert() {
+    const audio = new Audio("./src/audio/Always.mp3");
+
+    audio.addEventListener("canplaythrough", () => {
+      audio.play().then(() => {
+        alert("기상!!!");
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    });
+  }
+
+  private checkAlarm() {
+    if (!this.alarmTime || this.isAlarmPlaying) return;
+
+    const currentTime = new Date();
+    const hours = currentTime.getHours().toString().padStart(2, "0");
+    const minutes = currentTime.getMinutes().toString().padStart(2, "0");
+    const currentFormattedTime = `${hours}:${minutes}`;
+
+    if (currentFormattedTime === this.alarmTime) {
+      this.isAlarmPlaying = true;
+      this.playSoundAndShowAlert();
+      this.alarmTime = null;
+      this.isAlarmPlaying = false;
+    }
   }
 }
 
-const alarmTimeInput = document.getElementById("alarmTime") as HTMLInputElement;
-const setAlarmButton = document.getElementById("setAlarm") as HTMLButtonElement;
-
-let alarmTime: string | null = null;
-
-setAlarmButton.addEventListener("click", () => {
-  alarmTime = alarmTimeInput.value;
-});
-
-function checkAlarm() {
-  if (!alarmTime) return;
-
-  const currentTime = new Date();
-  const hours = currentTime.getHours().toString().padStart(2, "0");
-  const minutes = currentTime.getMinutes().toString().padStart(2, "0");
-  const currentFormattedTime = `${hours}:${minutes}`;
-
-  if (currentFormattedTime === alarmTime) {
-    alert("퇴근이다!!");
-    alarmTime = null;
-  }
-}
-
-setInterval(checkAlarm, 1000);
-
-setInterval(updateTime, 1000);
-updateTime();
+new Clock();
