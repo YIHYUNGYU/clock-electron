@@ -3,7 +3,6 @@ class Clock {
   private alarmTimeInput: HTMLInputElement;
   private setAlarmButton: HTMLButtonElement;
   private alarmTime: string | null;
-  private isAlarmPlaying: boolean;
 
   constructor() {
     this.clockElement = document.getElementById("clock");
@@ -14,7 +13,6 @@ class Clock {
       "setAlarm"
     ) as HTMLButtonElement;
     this.alarmTime = null;
-    this.isAlarmPlaying = false;
     this.initialize();
   }
 
@@ -46,20 +44,8 @@ class Clock {
     }
   }
 
-  private playSoundAndShowAlert() {
-    const audio = new Audio("./src/audio/Always.mp3");
-
-    audio.addEventListener("canplaythrough", () => {
-      audio.play().then(() => {
-        alert("기상!!!");
-        audio.pause();
-        audio.currentTime = 0;
-      });
-    });
-  }
-
   private checkAlarm() {
-    if (!this.alarmTime || this.isAlarmPlaying) return;
+    if (!this.alarmTime) return;
 
     const currentTime = new Date();
     const hours = currentTime.getHours().toString().padStart(2, "0");
@@ -67,11 +53,18 @@ class Clock {
     const currentFormattedTime = `${hours}:${minutes}`;
 
     if (currentFormattedTime === this.alarmTime) {
-      this.isAlarmPlaying = true;
-      this.playSoundAndShowAlert();
-      this.alarmTime = null;
-      this.isAlarmPlaying = false;
+      this.playSoundAndShowAlert().then(() => {
+        this.alarmTime = null;
+      });
     }
+  }
+
+  private async playSoundAndShowAlert() {
+    const audio = new Audio("./src/audio/Always.mp3");
+
+    await audio.play();
+    await alert("기상!!!");
+    await audio.pause();
   }
 }
 
