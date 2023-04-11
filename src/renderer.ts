@@ -38,7 +38,7 @@ class Clock {
     hours = hours === 0 ? 12 : hours;
 
     if (this.clockElement) {
-      this.clockElement.innerHTML = `${hours}:${minutes}:${seconds} ${amPm}`;
+      this.clockElement.innerHTML = `${amPm} ${hours}시 ${minutes}분 ${seconds}초`;
     } else {
       console.error("Cannot find the clock element in the DOM");
     }
